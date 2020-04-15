@@ -69,14 +69,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Message\DepositeType.cs" />
     <Compile Include="Message\MeasageType.cs" />
-    <Compile Include="Message\MessageModel.cs" />
     <Compile Include="Models\Bank.cs" />
     <Compile Include="Models\Person.cs" />
-    <Compile Include="Utils\Notifier.cs" />
+    <Compile Include="Utils\BankLogic.cs" />
+    <Compile Include="Utils\PersonProvider.cs" />
+    <Compile Include="Utils\SerializePerson.cs" />
     <Compile Include="ViewModels\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\DepositeViewModel.cs" />
+    <Compile Include="ViewModels\GetCashMenuViewModel.cs" />
     <Compile Include="ViewModels\GetCashViewModel.cs" />
+    <Compile Include="ViewModels\GetCertainValueViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
     <Compile Include="Views\AuthenticationView.xaml.cs">
@@ -85,8 +89,14 @@
     <Compile Include="Views\DepositeView.xaml.cs">
       <DependentUpon>DepositeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GetCashMenuView.xaml.cs">
+      <DependentUpon>GetCashMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GetCashView.xaml.cs">
       <DependentUpon>GetCashView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GetCertainValueView.xaml.cs">
+      <DependentUpon>GetCertainValueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -106,7 +116,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\GetCashMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GetCashView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GetCertainValueView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,15 +1,29 @@
-﻿using BankCadwise.Message;
-using BankCadwise.Models;
+﻿using BankCadwise.Models;
+using BankCadwise.Utils;
 using Caliburn.Micro;
-using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace BankCadwise.ViewModels
 {
-    class GetCashViewModel : Screen, IHandle<MessageModel>
+    class GetCashViewModel : Screen, IHandle<Person>
     {
         public Bank MyBank { get; set; }
-        BindableCollection<KeyValuePair<int, int>> _returnedMoney = new BindableCollection<KeyValuePair<int, int>>();
+        private int amount;
+
+        public int Amount
+        {
+            get { return amount; }
+            set
+            {
+                amount = value;
+                NotifyOfPropertyChange(() => Amount);
+            }
+        }
+
+        private Person person;
+        private BankLogic bankLogic;
+        private BindableCollection<KeyValuePair<int, int>> _returnedMoney = new BindableCollection<KeyValuePair<int, int>>();
         public BindableCollection<KeyValuePair<int, int>> ReturnedMoney
         {
             get { return _returnedMoney; }
@@ -20,49 +34,42 @@ namespace BankCadwise.ViewModels
             }
         }
         private readonly IEventAggregator _eventAggregator;
-
-        private readonly int _personBalance;
-        public GetCashViewModel(IEventAggregator eventAggregator,int persomBalance)
+        public GetCashViewModel(IEventAggregator eventAggregator, Bank myBank)
         {
-            MyBank = Bank.GetBank();
+            MyBank = myBank;
+            bankLogic = new BankLogic(MyBank);
+            MyBank.Balance = bankLogic.GetBalance();
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
             ReturnedMoney = new BindableCollection<KeyValuePair<int, int>>();
-            _personBalance = persomBalance;
         }
 
         public bool CanGetCash(int amount, bool exchange)
         {
-            return (amount > 0)&&(amount<= _personBalance)&&(_personBalance-amount>=0);
+            return (amount > 0) && (person.Balance - amount >= 0);
         }
-        public void GetCash(int amount, bool exchange)
+        public void GetCash(int amount,bool exchange)
         {
-            MyBank.GetCash(amount, exchange);
+            var value = bankLogic.GetCash(amount, exchange);
+            if (value != null)
+            {
+                ReturnMoney(value);
+                person.Balance -= amount;               
+            }
+            else
+            {
+                MessageBox.Show("Недостаточно купюр для выдачи суммы.", "Ошибка");
+            }
+            Amount =0;
         }
         private void ReturnMoney(BindableCollection<KeyValuePair<int, int>> returnedMoney)
         {
-            ReturnedMoney = new BindableCollection<KeyValuePair<int, int>>();
-            foreach (var item in returnedMoney)
-            {
-                ReturnedMoney.Add(item);
-            }
+            ReturnedMoney = new BindableCollection<KeyValuePair<int, int>>(returnedMoney);
         }
 
-        public void Handle(MessageModel message)
+        public void Handle(Person _person)
         {
-            switch (message.Type)
-            {
-                case MessageType.GetCashSuccess:
-                    {
-                        ReturnMoney((BindableCollection<KeyValuePair<int, int>>)message.Parametr);
-                        MyBank.GetBalance();
-                        break;
-                    }
-                case MessageType.GetCashError:
-                    break;
-                default:
-                    break;
-            }
+            person = _person;
         }
     }
 }

@@ -33,7 +33,7 @@
         <Button Content="Снять наличные" x:Name="GetCash"
                 Grid.Column="1" Grid.Row="3"
                 Margin="5"/>
-        <Button Content="Завершить работу"
+        <Button Content="Завершить работу" x:Name="LogOut"
                 Grid.Column="1" Grid.Row="4"
                 Margin="5"/>
         

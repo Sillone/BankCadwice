@@ -13,11 +13,7 @@ namespace BankCadwise.Message
 		LoginError,
 		Logout,
 		Deposit,
-		DepositSuccess,
-		DepositError,
 		GetCash,
-		GetCashSuccess,
-		GetCashError,
 
 	}
 }

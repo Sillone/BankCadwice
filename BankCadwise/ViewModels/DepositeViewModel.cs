@@ -1,50 +1,71 @@
-﻿using BankCadwise.Models;
+﻿using BankCadwise.Message;
+using BankCadwise.Models;
+using BankCadwise.Utils;
 using Caliburn.Micro;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace BankCadwise.ViewModels
 {
     class DepositeViewModel : Screen
-    {
-  
-        private readonly IEventAggregator _eventAggregator;
-        public Person MyPerson { get; private set; }     
+    { 
+
+        private readonly IEventAggregator _eventAggregator;     
+
         public Bank MyBank { get; set; }
+        BankLogic bankLogic;
+
         private int balance;
         public int Balance
         {
             get { return balance; }
-            set { balance = value;
-                NotifyOfPropertyChange(()=>Balance);
+            set
+            {
+                balance = value;
+                NotifyOfPropertyChange(() => Balance);
             }
         }
+
         public KeyValuePair<int, int> DepositeMoney { get; set; }
-        BindableCollection<KeyValuePair<int, int>> _availableMoney = new BindableCollection<KeyValuePair<int, int>>();
+
+        private BindableCollection<KeyValuePair<int, int>> _availableMoney = new BindableCollection<KeyValuePair<int, int>>();
         public BindableCollection<KeyValuePair<int, int>> AvailableMoney
         {
             get { return _availableMoney; }
             set { _availableMoney = value; }
         }
 
-        public DepositeViewModel(IEventAggregator eventAggregator, Person person)
+        public DepositeViewModel(IEventAggregator eventAggregator, Bank bank)
         {
-            _eventAggregator = eventAggregator;
-            MyPerson = person;
-            MyBank = Bank.GetBank();
-            ReFreshAvailebleMoney();
+            MyBank = bank;
+            bankLogic = new BankLogic(bank);
+            _eventAggregator = eventAggregator;          
+            RefreshAvailebleMoney();
+           
         }
         public bool CanDeposite(int count)
         {
-            return count > 0;
+            return (count > 0)&&(count!=100);
         }
         public void Deposite(int count)
         {
-            MyBank.DepositMoney(DepositeMoney.Key, count);
-            ReFreshAvailebleMoney();
+            var returnCount = bankLogic.DepositMoney(DepositeMoney.Key, count);
+            if(returnCount<=0)
+            {
+                RefreshAvailebleMoney();              
+                _eventAggregator.PublishOnUIThread(new DepositeType(DepositeMoney.Key * count));
+            }
+            else
+            {
+                RefreshAvailebleMoney();
+                var rightCount = count - returnCount;
+                _eventAggregator.PublishOnUIThread(new DepositeType(rightCount));
+                MessageBox.Show($"Количество купюр достигла максимум \nВам вернули: {DepositeMoney.Key}, в количестве {returnCount}", "Ошибка"); ; ;
+            }
         }
-        private void ReFreshAvailebleMoney()
+        private void RefreshAvailebleMoney()
         {
-            Balance = MyBank.Balance;
+            Balance = bankLogic.GetBalance();
             foreach (var item in MyBank.AvailableMoney)
             {
                 for (int i = 0; i < AvailableMoney.Count; i++)
@@ -58,5 +79,7 @@ namespace BankCadwise.ViewModels
                     AvailableMoney.Add(item);
             }
         }
+
+     
     }
 }

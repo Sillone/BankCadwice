@@ -1,39 +1,61 @@
-﻿using BankCadwise.Models;
+﻿using BankCadwise.Message;
+using BankCadwise.Models;
+using BankCadwise.Utils;
 using Caliburn.Micro;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BankCadwise.ViewModels
 {
-    class MenuViewModel : Conductor<object>
+    class MenuViewModel : Conductor<object>, IHandle<Person>, IHandle<DepositeType>
     {
         private readonly IEventAggregator _eventAggregator;
-
-        public Person MyPerson { get; set; }      
-        public MenuViewModel(IEventAggregator eventAggregator, Person person)
+        private readonly SimpleContainer _container;
+        private readonly SerializePerson serializePerson;
+        private Person _person;
+        public Person MyPerson
         {
-            _eventAggregator = eventAggregator;
-            _eventAggregator.Subscribe(this);
-            MyPerson = person;
+            get { return _person; }
+            set
+            {
+                _person = value;
+                NotifyOfPropertyChange(() => MyPerson);
+            }
         }
 
+        public MenuViewModel(IEventAggregator eventAggregator, SimpleContainer container)
+        {
+
+            _eventAggregator = eventAggregator;
+            _eventAggregator.Subscribe(this);
+            _container = container;
+            serializePerson = _container.GetInstance<SerializePerson>();
+        }
 
         public void Deposite()
         {
-            ActivateItem(new DepositeViewModel(_eventAggregator, MyPerson));
+            ActivateItem(_container.GetInstance<DepositeViewModel>());
+            _eventAggregator.PublishOnBackgroundThread(MyPerson);
+
         }
 
         public void GetCash()
         {
-            ActivateItem(new GetCashViewModel(_eventAggregator, (int)MyPerson.Balance)); 
+            ActivateItem(_container.GetInstance<GetCashMenuViewModel>());
+            _eventAggregator.PublishOnBackgroundThread(MyPerson);
         }
 
         public void LogOut()
         {
+            serializePerson.Serialize(MyPerson);
+            _eventAggregator.PublishOnBackgroundThread(MessageType.Logout);
+        }
 
+        public void Handle(Person person)
+        {
+            MyPerson = person;
+        }
+        public void Handle(DepositeType message)
+        {
+            MyPerson.Balance += message.Amount;
         }
     }
 }

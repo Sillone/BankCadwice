@@ -31,3 +31,7 @@ D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\DepositeView.baml
 D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\MenuView.baml
 D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCashView.g.cs
 D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCashView.baml
+D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCertainValueView.g.cs
+D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCertainValueView.baml
+D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCashMenuView.g.cs
+D:\Projects\BankCadwise\BankCadwise\obj\Debug\Views\GetCashMenuView.baml

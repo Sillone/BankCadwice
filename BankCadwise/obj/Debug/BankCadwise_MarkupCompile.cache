@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\Projects\BankCadwise\BankCadwise\App.xaml
-5-1153862152
+7-911034083
 
-20-963757155
+26-240067156
 122-162608194
-Views\AuthenticationView.xaml;Views\DepositeView.xaml;Views\GetCashView.xaml;Views\MainView.xaml;Views\MenuView.xaml;
+Views\AuthenticationView.xaml;Views\DepositeView.xaml;Views\GetCashMenuView.xaml;Views\GetCashView.xaml;Views\GetCertainValueView.xaml;Views\MainView.xaml;Views\MenuView.xaml;
 
 False
 

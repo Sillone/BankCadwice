@@ -26,8 +26,8 @@
         </Grid.RowDefinitions>
 
         <Label Content="Введите сумму" Grid.Column="1" Grid.Row="2" Margin="1"/>
-        <TextBox x:Name="amount" Margin="5,0" Grid.Column="1" Grid.Row="3" MinWidth="100" 
-                 TextAlignment="Center" MaxLength="1000000"/>
+        <TextBox x:Name="amount" Text="{Binding Path=Amount,Mode=OneWay}" Margin="5,0" Grid.Column="1" Grid.Row="3" MinWidth="100" 
+                 TextAlignment="Center"/>
         <CheckBox x:Name="exchange" Content="Выдать мелкими купюрами" Grid.Column="1" Grid.Row="4" Margin="1"/>
         <Button x:Name="GetCash" Content="Снять наличные" Grid.Column="1" Grid.Row="5" Margin="1"/>
 

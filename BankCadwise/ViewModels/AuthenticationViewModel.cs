@@ -11,19 +11,19 @@ using System.Windows;
 
 namespace BankCadwise.ViewModels
 {
-    class AuthenticationViewModel:Screen, IHandle<MessageModel>
+    class AuthenticationViewModel:Screen, IHandle<MessageType>
     {
         private readonly IEventAggregator _eventAggregator;
-        private Notifier notifier;           
+        private PersonProvider notifier;
         public AuthenticationViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
-            notifier = new Notifier(eventAggregator);
+            notifier = new PersonProvider();
         }
-        public void Handle(MessageModel message)
+        public void Handle(MessageType message)
         {
-           if(message.Type==MessageType.LoginError)
+           if(message==MessageType.LoginError)
             {
                 MessageBox.Show("Не верный Id или пароль\n Попробуйте ещё раз.","Ошибка авторизации");
             }
@@ -33,10 +33,14 @@ namespace BankCadwise.ViewModels
             return id>0 && !String.IsNullOrEmpty(password);
         }
         public void Login(int id, string password)
-        {                      
-                var message = new MessageModel(MessageType.Login, id, password ) ;
-                _eventAggregator.BeginPublishOnUIThread(message);
+        {
 
+            var person= notifier.Login(id, password);
+            if (person!=null)
+            {                  
+                _eventAggregator.PublishOnUIThread(MessageType.LoginSuccess);
+                _eventAggregator.PublishOnBackgroundThread(person);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BankCadwise.Models;
+using BankCadwise.Utils;
 using BankCadwise.ViewModels;
 using Caliburn.Micro;
 using System;
@@ -18,8 +19,7 @@ namespace BankCadwise
         {
             DisplayRootViewFor<MainViewModel>();
         }
-        private readonly SimpleContainer _container =
-        new SimpleContainer();
+        private readonly SimpleContainer _container = new SimpleContainer();
 
         protected override object GetInstance(Type service, string key)
         {
@@ -41,10 +41,18 @@ namespace BankCadwise
 
         protected override void Configure()
         {
+            _container.RegisterInstance(typeof(SimpleContainer), "Coniainer", _container);
             _container.Singleton<IWindowManager, WindowManager>();
             _container.Singleton<IEventAggregator, EventAggregator>();
+            _container.Singleton<SerializePerson>();
             _container.Singleton<Bank>();
             _container.Singleton<MainViewModel>();
+            _container.PerRequest<GetCashMenuViewModel>();
+            _container.PerRequest<MenuViewModel>();
+            _container.PerRequest<AuthenticationViewModel>();
+            _container.PerRequest<GetCertainValueViewModel>();
+            _container.PerRequest<GetCashViewModel>();
+            _container.PerRequest<DepositeViewModel>();
         }
     }
 }

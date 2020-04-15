@@ -4,36 +4,35 @@ using Caliburn.Micro;
 
 namespace BankCadwise.ViewModels
 {
-    class MainViewModel : Conductor<object>, IHandle<MessageModel>
+    class MainViewModel : Conductor<object>, IHandle<MessageType>
     {
         private readonly IEventAggregator _eventAggregator;
-
-        private Bank _bank;
-        public MainViewModel(IEventAggregator eventAggregator)
+        public MainViewModel(IEventAggregator eventAggregator, SimpleContainer container)
         {
+            _auth = container.GetInstance<AuthenticationViewModel>();
+            _menu = container.GetInstance<MenuViewModel>();
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
-            ActivateItem(new AuthenticationViewModel(eventAggregator));
-            _bank = new Bank(_eventAggregator);
-
+            ActivateItem(_auth);         
         }
-
-        private void LoadMenu(object obj)
+        private AuthenticationViewModel _auth;
+        private MenuViewModel _menu;
+        private void LoadMenu()
         {
-            ActivateItem(new MenuViewModel(_eventAggregator,(Person)obj));
+            ActivateItem(_menu);    
         }
         private void LoadAuthor()
         {
-            ActivateItem(new AuthenticationViewModel(_eventAggregator));
+            ActivateItem(_auth);        
         }
-        public void Handle(MessageModel message)
+        public void Handle(MessageType message)
         {
-            switch (message.Type)
+            switch (message)
             {
 
                 case MessageType.LoginSuccess:
                     {
-                        LoadMenu(message.Parametr);
+                        LoadMenu();
                         break;
                     }
 
@@ -41,8 +40,7 @@ namespace BankCadwise.ViewModels
                     {
                         LoadAuthor();
                         break;
-                    }
-
+                    }             
                 default:
                     break;
             }
